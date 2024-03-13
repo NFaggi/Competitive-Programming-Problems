@@ -1,22 +1,23 @@
 #include <bits/stdc++.h>
+
 using namespace std;
- 
+
 int main()
 {
-    long long n,sum=0;
+    int n, i, ant, a;
+    long long sum=0;
     cin >> n;
-    vector <int> x(n);
-    for(int i=0; i<n; i++)
+    cin >> ant;
+    for(i=1; i<n; i++)
     {
-        cin >> x[i];
-    }
-    for(int i=0;i<n-1; i++)
-    {
-        if(x[i]>x[i+1])
+        cin >> a;
+        if(ant>a)
         {
-            sum+=x[i]-x[i+1];
-            x[i+1]=x[i];
+            sum+=ant-a;
         }
+        else
+            ant=a;
     }
     cout << sum;
+    return 0;
 }

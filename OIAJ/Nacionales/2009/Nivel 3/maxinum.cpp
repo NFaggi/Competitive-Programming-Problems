@@ -12,7 +12,7 @@ pair<long long,long long> cal(vector<long long>v)
         if(i>0)
         {
             dp[i+1]=max(dp[i+1],{dp[i-1].first+v[i]*v[i-1],dp[i-1].second});
-            cout << dp[i+1].first << ' ' << dp[i+1].second << '\n';
+            //cout << dp[i+1].first << ' ' << dp[i+1].second << '\n';
         }
     }
     return dp[n];

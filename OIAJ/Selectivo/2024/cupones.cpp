@@ -1,0 +1,332 @@
+//Link: https://juez.oia.unsam.edu.ar/task/158
+//Score: 100/100
+#include <bits/stdc++.h>
+#define s(x) int(x.size())
+using namespace std;
+vector<vector<long long>>blocks;
+vector<bool>par;
+vector<pair<long long, long long>>p; //impar par
+int tam=450,bks=0;
+long long sum=0;
+void ins(long long x)
+{
+    int i, pos=-2;
+    for(i=0; i<s(blocks); i++)
+    {
+        if(blocks[i][0]<x)
+        {
+            pos=i-1;
+            break;
+        }
+    }
+    if(pos==-1)
+        pos=0;
+    else if(pos==-2)
+        pos=s(blocks)-1;
+    if(s(blocks)==0)
+    {
+        blocks.push_back({x});
+        p.push_back({0,x});
+        par.push_back(0);
+        sum+=x;
+        bks++;
+        pos=s(blocks)-1;
+    }
+    else
+    {
+        blocks[pos].push_back(x);
+        if((s(blocks[pos])-1)%2==0)
+        {
+            p[pos].second+=x;
+            if(par[pos]==0)
+                sum+=x;
+        }
+        else
+        {
+            p[pos].first+=x;
+            if(par[pos]==1)
+                sum+=x;
+        }
+        for(i=s(blocks[pos])-2; i>=0; i--)
+        {
+            if(blocks[pos][i]<blocks[pos][i+1])
+            {
+                if(i%2==0)
+                {
+                    p[pos].second-=blocks[pos][i];
+                    p[pos].first+=blocks[pos][i];
+                    p[pos].second+=blocks[pos][i+1];
+                    p[pos].first-=blocks[pos][i+1];
+                    if(par[pos]==0)
+                    {
+                        sum-=blocks[pos][i];
+                        sum+=blocks[pos][i+1];
+                    }
+                    else
+                    {
+                        sum-=blocks[pos][i+1];
+                        sum+=blocks[pos][i];
+                    }
+                }
+                else
+                {
+                    p[pos].second-=blocks[pos][i+1];
+                    p[pos].first+=blocks[pos][i+1];
+                    p[pos].second+=blocks[pos][i];
+                    p[pos].first-=blocks[pos][i];
+                    if(par[pos]==1)
+                    {
+                        sum-=blocks[pos][i];
+                        sum+=blocks[pos][i+1];
+                    }
+                    else
+                    {
+                        sum-=blocks[pos][i+1];
+                        sum+=blocks[pos][i];
+                    }
+                }
+                swap(blocks[pos][i],blocks[pos][i+1]);
+            }
+            else
+            {
+                break;
+            }
+        }
+        for(i=pos+1; i<s(blocks); i++)
+        {
+            if(par[i]==0)
+            {
+                sum-=p[i].second;
+                sum+=p[i].first;
+                par[i]=1;
+            }
+            else
+            {
+                sum-=p[i].first;
+                sum+=p[i].second;
+                par[i]=0;
+            }
+        }
+    }
+    if(s(blocks[pos])>=tam*2)
+    {
+        blocks.push_back({blocks[pos][tam]});
+        p.push_back({0,blocks[pos][tam]});
+        if(tam%2==0)
+        {
+            p[pos].second-=blocks[pos][tam];
+            par.push_back(par[pos]);
+        }
+        else
+        {
+            p[pos].first-=blocks[pos][tam];
+            if(par[pos]==1)
+            {
+                par.push_back(0);
+            }
+            else
+            {
+                par.push_back(1);
+            }
+        }
+        for(i=tam+1; i<s(blocks[pos]); i++)
+        {
+            if(i%2==0)
+            {
+                p[pos].second-=blocks[pos][i];
+            }
+            else
+            {
+                p[pos].first-=blocks[pos][i];
+            }
+            if(s(blocks[s(blocks)-1])%2==0)
+            {
+                p[s(blocks)-1].second+=blocks[pos][i];
+            }
+            else
+            {
+                p[s(blocks)-1].first+=blocks[pos][i];
+            }
+            blocks[s(blocks)-1].push_back(blocks[pos][i]);
+        }
+        blocks[pos].resize(tam);
+        for(i=s(blocks)-2; i>pos; i--)
+        {
+            swap(blocks[i],blocks[i+1]);
+            swap(p[i],p[i+1]);
+            swap(par[i],par[i+1]);
+        }
+    }
+}
+void del(long long x)
+{
+    int i, pos=-2,posB=0,newP;
+    for(i=0; i<s(blocks); i++)
+    {
+        if(blocks[i][0]<x)
+        {
+            pos=i-1;
+            break;
+        }
+    }
+    if(pos==-1)
+        pos=0;
+    else if(pos==-2)
+        pos=s(blocks)-1;
+    for(i=0; i<s(blocks[pos]); i++)
+    {
+        if(blocks[pos][i]==x)
+        {
+            posB=i;
+            break;
+        }
+    }
+    for(i=posB+1; i<s(blocks[pos]); i++)
+    {
+        if(i%2==0)
+        {
+            p[pos].second-=blocks[pos][i];
+            p[pos].first+=blocks[pos][i];
+            p[pos].second+=blocks[pos][i-1];
+            p[pos].first-=blocks[pos][i-1];
+            if(par[pos]==0)
+            {
+                sum-=blocks[pos][i];
+                sum+=blocks[pos][i-1];
+            }
+            else
+            {
+                sum-=blocks[pos][i-1];
+                sum+=blocks[pos][i];
+            }
+        }
+        else
+        {
+            p[pos].second-=blocks[pos][i-1];
+            p[pos].first+=blocks[pos][i-1];
+            p[pos].second+=blocks[pos][i];
+            p[pos].first-=blocks[pos][i];
+            if(par[pos]==1)
+            {
+                sum-=blocks[pos][i];
+                sum+=blocks[pos][i-1];
+            }
+            else
+            {
+                sum-=blocks[pos][i-1];
+                sum+=blocks[pos][i];
+            }
+        }
+        swap(blocks[pos][i-1],blocks[pos][i]);
+    }
+    if((s(blocks[pos])-1)%2==0)
+    {
+        p[pos].second-=blocks[pos][s(blocks[pos])-1];
+        if(par[pos]==0)
+        {
+            sum-=blocks[pos][s(blocks[pos])-1];
+        }
+    }
+    else
+    {
+        p[pos].first-=blocks[pos][s(blocks[pos])-1];
+        if(par[pos]==1)
+        {
+            sum-=blocks[pos][s(blocks[pos])-1];
+        }
+    }
+    blocks[pos].pop_back();
+    for(i=pos+1; i<s(blocks); i++)
+    {
+        if(par[i]==0)
+        {
+            sum-=p[i].second;
+            sum+=p[i].first;
+            par[i]=1;
+        }
+        else
+        {
+            sum-=p[i].first;
+            sum+=p[i].second;
+            par[i]=0;
+        }
+    }
+    if(pos-1<0)
+        return;
+    if(s(blocks[pos])<=int(tam/2))
+    {
+        for(i=0; i<s(blocks[pos]); i++)
+        {
+            blocks[pos-1].push_back(blocks[pos][i]);
+        }
+        for(i=pos+1; i<s(blocks); i++)
+        {
+            swap(blocks[i],blocks[i-1]);
+            swap(par[i],par[i-1]);
+            swap(p[i],p[i-1]);
+        }
+        blocks.pop_back();
+        par.pop_back();
+        p.pop_back();
+        pos=pos-1;
+        if(s(blocks[pos])>=tam*2)
+        {
+            blocks.push_back({blocks[pos][tam]});
+            p.push_back({0,blocks[pos][tam]});
+            if(tam%2==0)
+            {
+                p[pos].second-=blocks[pos][tam];
+                par.push_back(par[pos]);
+            }
+            else
+            {
+                p[pos].first-=blocks[pos][tam];
+                if(par[pos]==1)
+                {
+                    par.push_back(0);
+                }
+                else
+                {
+                    par.push_back(1);
+                }
+            }
+            for(i=tam+1; i<s(blocks[pos]); i++)
+            {
+                if(i%2==0)
+                {
+                    p[pos].second-=blocks[pos][i];
+                }
+                else
+                {
+                    p[pos].first-=blocks[pos][i];
+                }
+                if(s(blocks[s(blocks)-1])%2==0)
+                {
+                    p[s(blocks)-1].second+=blocks[pos][i];
+                }
+                else
+                {
+                    p[s(blocks)-1].first+=blocks[pos][i];
+                }
+                blocks[s(blocks)-1].push_back(blocks[pos][i]);
+            }
+            blocks[pos].resize(tam);
+            for(i=s(blocks)-2; i>pos; i--)
+            {
+                swap(blocks[i],blocks[i+1]);
+                swap(p[i],p[i+1]);
+                swap(par[i],par[i+1]);
+            }
+        }
+    }
+}
+long long agregar(long long x)
+{
+    ins(x);
+    return sum;
+}
+long long sacar(long long x)
+{
+    del(x);
+    return sum;
+}

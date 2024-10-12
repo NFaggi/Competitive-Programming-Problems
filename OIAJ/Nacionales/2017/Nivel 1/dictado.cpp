@@ -29,6 +29,5 @@ int cal(string & s)
 int  dictado( string palabra )
 {
     string s=palabra;
-    reverse(s.begin(),s.end());
-    return min(cal(palabra),cal(s));
+    return cal(palabra);
 }

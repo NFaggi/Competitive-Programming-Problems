@@ -1,4 +1,4 @@
-//Link:
+//Link:https://codeforces.com/gym/105047/attachments
 //Score: 100/100
 #include <bits/stdc++.h>
 #define ll long long

@@ -1,35 +1,42 @@
 #include <bits/stdc++.h>
- 
 using namespace std;
- 
+
+int dp[1001][1001];
+
 int main()
 {
-    int n, q, i, j, a, b, c, d;
-    char ch;
+    ios::sync_with_stdio(0);cin.tie(0);
+    int n, q, i, j, a, b, c, d, sum;
+    string s;
     cin >> n >> q;
-    vector<vector<int>>mat(n+1,vector<int>(n+1,0));
-    vector<vector<int>>sum(n+1,vector<int>(n+1,0));
- 
     for(i=1; i<=n; i++)
     {
+        cin >> s;
         for(j=1; j<=n; j++)
         {
-            cin >> ch;
-            if(ch=='*')
-                mat[i][j]=1;
+            if(s[j-1]=='*')
+            {
+                dp[i][j]=1;
+            }
         }
     }
     for(i=1; i<=n; i++)
     {
         for(j=1; j<=n; j++)
         {
-            sum[i][j]=mat[i][j]+sum[i-1][j]+sum[i][j-1]-sum[i-1][j-1];
+            dp[i][j]+=dp[i-1][j]+dp[i][j-1]-dp[i-1][j-1];
         }
     }
     while(q--)
     {
         cin >> a >> b >> c >> d;
-        cout << sum[c][d]-sum[a-1][d]-sum[c][b-1]+sum[a-1][b-1] << '\n';
+        if(a>c)
+            swap(a,c);
+        if(b>d)
+            swap(b,d);
+        sum=dp[c][d]+dp[a-1][b-1]-dp[a-1][d]-dp[c][b-1];
+        printf("%d\n",sum);
+
     }
     return 0;
 }

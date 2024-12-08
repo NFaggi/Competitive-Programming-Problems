@@ -1,4 +1,5 @@
 //Link: https://codeforces.com/gym/104597/problem/C
+//Score: 100/100
 #include <bits/stdc++.h>
 
 using namespace std;

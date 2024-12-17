@@ -1,4 +1,3 @@
-//Link: https://omegaup.com/arena/ciic-2021-publico/#problems/ping-pong
 //Score: 100/100
 #include<bits/stdc++.h>
 #define ll long long

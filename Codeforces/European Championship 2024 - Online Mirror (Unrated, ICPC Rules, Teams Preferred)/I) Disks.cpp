@@ -10,7 +10,7 @@ bool sonTan(int x1, int y1, int r1, int x2, int y2, int r2) {
     long long dy = y2 - y1;
     long double dist = sqrt(dx * dx + dy * dy);
 
-    return (dist == r1 + r2 || dist == abs(r1 - r2));
+    return dist == r1 + r2;
 }
 int aum,dis;
 bool dfs(int nod, int action)
@@ -74,3 +74,4 @@ int main()
     cout << "NO\n";
     return 0;
 }
+

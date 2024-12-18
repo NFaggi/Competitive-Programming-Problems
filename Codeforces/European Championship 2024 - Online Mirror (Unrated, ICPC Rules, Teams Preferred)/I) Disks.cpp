@@ -6,10 +6,10 @@ const int MAXN=1e3+1;
 vector<int>grafo[MAXN];
 int vis[MAXN];
 bool sonTan(int x1, int y1, int r1, int x2, int y2, int r2) {
-    long long dx = x2 - x1;
-    long long dy = y2 - y1;
-    long double dist = sqrt(dx * dx + dy * dy);
-
+    ll dx = x2 - x1,dy = y2 - y1, cal=dx * dx + dy * dy;
+    ll dist = sqrt(cal);
+    if(dist*dist!=cal)
+        return 0;
     return dist == r1 + r2;
 }
 int aum,dis;
@@ -74,4 +74,5 @@ int main()
     cout << "NO\n";
     return 0;
 }
+
 

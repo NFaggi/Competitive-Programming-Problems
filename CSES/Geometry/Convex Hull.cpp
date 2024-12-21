@@ -3,28 +3,32 @@
 #define sz(x) int(x.size())
 #define all(x) x.begin(),x.end()
 using namespace std;
-bool comp(const pair<ll,ll> &a, const pair<ll,ll> &b)
+struct Punto
 {
-    if(a.first!=b.first)
-        return a.first<b.first;
-    return a.second>b.second;
-}
-ll valid(const pair<ll,ll> &a, const pair<ll,ll> &b, const pair<ll,ll> &c)
+    ll x, y;
+};
+bool comp(const Punto &a, const Punto &b)
 {
-    return (a.first - b.first) * (c.second - b.second) - (a.second - b.second) * (c.first - b.first);
+    if(a.y!=b.y)
+        return a.y<b.y;
+    return a.x<b.x;
 }
- 
+ll valid(const Punto &a, const Punto &b, const Punto &c)
+{
+    return (a.x - b.x) * (c.y - b.y) - (a.y - b.y) * (c.x - b.x);
+}
+
 int main()
 {
     ll n, i;
     cin >> n;
-    vector<pair<ll,ll>>v(n);
+    vector<Punto>v(n);
     for(i=0; i<n; i++)
-        cin >> v[i].first >> v[i].second;
+        cin >> v[i].x >> v[i].y;
     sort(all(v),comp);
-    vector<pair<ll,ll>>s,s2;
+    vector<Punto>s,s2;
     set<pair<ll,ll>> se;
-    vector<pair<ll,ll>> ans;
+    vector<Punto> ans;
     for(i=0; i<n; i++)
     {
         while(sz(s)>1&&valid(s[sz(s)-2],s.back(),v[i])>0ll)s.pop_back();
@@ -35,26 +39,29 @@ int main()
         while(sz(s2)>1&&valid(s2[sz(s2)-2],s2.back(),v[i])>0ll)s2.pop_back();
         s2.push_back(v[i]);
     }
- 
+
+    pair<ll,ll>p;
     for (auto j : s)
     {
-        if (!se.count(j))
+        p={j.x,j.y};
+        if (!se.count(p))
         {
             ans.push_back(j);
-            se.insert(j);
+            se.insert(p);
         }
     }
     for (auto j : s2)
     {
-        if (!se.count(j))
+        p={j.x,j.y};
+        if (!se.count(p))
         {
             ans.push_back(j);
-            se.insert(j);
+            se.insert(p);
         }
     }
- 
+
     cout << sz(ans) << '\n';
     for (auto j : ans)
-        cout << j.first << ' ' << j.second << '\n';
+        cout << j.x << ' ' << j.y << '\n';
     return 0;
 }

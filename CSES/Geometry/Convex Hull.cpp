@@ -31,12 +31,12 @@ int main()
     vector<Punto> ans;
     for(i=0; i<n; i++)
     {
-        while(sz(s)>1&&valid(s[sz(s)-2],s.back(),v[i])>0ll)s.pop_back();
+        while(sz(s)>1&&valid(s[sz(s)-2],s[sz(s)-1],v[i])>0ll)s.pop_back();
         s.push_back(v[i]);
     }
     for(i=n-1; i>=0; i--)
     {
-        while(sz(s2)>1&&valid(s2[sz(s2)-2],s2.back(),v[i])>0ll)s2.pop_back();
+        while(sz(s2)>1&&valid(s2[sz(s2)-2],s2[sz(s2)-1],v[i])>0ll)s2.pop_back();
         s2.push_back(v[i]);
     }
 

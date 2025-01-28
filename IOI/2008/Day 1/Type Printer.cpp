@@ -1,3 +1,5 @@
+//Link: https://oj.uz/problem/view/IOI08_printer
+//Score: 100/100
 #include <bits/stdc++.h>
 
 using namespace std;

@@ -1,3 +1,5 @@
+//Link: https://juez.oia.unsam.edu.ar/task/72
+//Score: 100/100
 #include <bits/stdc++.h>
 
 using namespace std;

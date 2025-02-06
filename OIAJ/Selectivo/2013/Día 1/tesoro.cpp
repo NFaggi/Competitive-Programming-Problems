@@ -52,9 +52,15 @@ int main()
         }
     }
     for(i=0; i<n; i++)
+    {
         for(j=0; j<m; j++)
+        {
             for(l=0; l<=f; l++)
+            {
                 dist[i][j][l]=INF;
+            }
+        }
+    }
     dist[0][0][0]=1;
     priority_queue<pair<ll,pair<ll,pair<ll,ll>>>>pq;
     pq.push({-1,{0,{0,0}}});
@@ -76,27 +82,33 @@ int main()
             if(nx<0||nx>=n||ny<0||ny>m)
                 continue;
             if(v[nx][ny]=='T'||v[nx][ny]=='V')
+            {
                 if(dist[nx][ny][us]>dist[x][y][us]+1)
                 {
                     dist[nx][ny][us]=dist[x][y][us]+1;
                     ant[nx][ny][us]={us,{x,y}};
                     pq.push({-dist[nx][ny][us],{us,{nx,ny}}});
                 }
+            }
             else if(v[nx][ny]=='W'&&us+1<=f)
+            {
                 if(dist[nx][ny][us+1]>dist[x][y][us]+1)
                 {
                     dist[nx][ny][us+1]=dist[x][y][us]+1;
                     ant[nx][ny][us+1]={us,{x,y}};
                     pq.push({-dist[nx][ny][us+1],{us+1,{nx,ny}}});
                 }
+            }
         }
     }
     for(i=0; i<=f; i++)
+    {
         if(dist[ti][tj][i]<mi)
         {
             mi=dist[ti][tj][i];
             used=i;
         }
+    }
     if(mi==INF)
     {
         cout << "imposible\n";
@@ -112,6 +124,8 @@ int main()
         rec.pb({act.se.fr,act.se.se});
     }
     for(i=sz(rec)-1; i>=0; i--)
+    {
         cout << '(' << rec[i].fr << "," << rec[i].se << ")\n";
+    }
     return 0;
 }

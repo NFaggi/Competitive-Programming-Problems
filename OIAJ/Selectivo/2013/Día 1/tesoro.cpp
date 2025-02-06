@@ -20,6 +20,8 @@ ll X[4]={-1,0,0,1};
 ll Y[4]={0,-1,1,0};
 int main()
 {
+    //ios::sync_with_stdio(false);
+    //cin.tie(nullptr);
     ifstream cin ("tesoro.in");
     ofstream cout ("tesoro.out");
     ll n, m, f, ti=-1, tj, mi=INF, i, j, used, nx, ny, l;
@@ -120,6 +122,7 @@ int main()
     pair<ll,pair<ll,ll>>act={used,{ti,tj}};
     while(act.se.fr!=0||act.se.se!=0)
     {
+        //cout << act.se.fr << ' ' << act.se.se << ' ' << act.fr << '\n';
         act=ant[act.se.fr][act.se.se][act.fr];
         rec.pb({act.se.fr,act.se.se});
     }

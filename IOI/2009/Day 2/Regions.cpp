@@ -37,10 +37,6 @@ int main()
         regiones[h].push_back(i);
     }
     dfs(1);
-    /*for(i=1; i<=n; i++)
-    {
-        cout << i << ": " << in[i] << ' ' << fin[i] << ' ' << reg[i] << '\n';
-    }*/
     for(i=0; i<=r; i++)
     {
         sort(times[i].begin(),times[i].end());

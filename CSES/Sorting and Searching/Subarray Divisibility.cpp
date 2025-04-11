@@ -6,15 +6,17 @@ int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    ll n, i, sum=0,x,resto,cant=0,aum=1e9;
+    ll n, i, sum=0,x,resto,cant=0;
     cin >> n;
     map<ll,ll>m;
     m[0]=1;
     for(i=0; i<n; i++)
     {
         cin >> x;
-        sum+=(x+aum);
-        resto=sum%n;
+        sum=sum+x;
+        resto=(sum%n);
+        if(resto<0)
+            resto+=n;
         cant+=m[resto];
         m[resto]++;
     }

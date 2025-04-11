@@ -37,15 +37,13 @@ int main()
     ll n, i, q, a, b, pot=1;
     char c;
     cin >> n >> q;
-    vector<ll>v(n);
-    set<ll>s;
+    vector<ll>v(n), vals;
     for(i=0; i<n; i++)
     {
         cin >> v[i];
-        s.insert(v[i]);
+        vals.pb(v[i]);
     }
     vector<query>qs(q);
-    unordered_map<ll,ll>m,m2,m3;
     for(i=0; i<q; i++)
     {
         cin >> c >> a >> b;
@@ -55,56 +53,31 @@ int main()
         nod.c=c;
         qs[i]=nod;
         if(c=='!')
-            s.insert(b);
-    }
-    ll pos=0;
-    for(auto k:s)
-    {
-        m[k]=pos;
-        pos++;
-    }
-    for(i=0; i<q; i++)
-    {
-        query nod;
-        nod=qs[i];
-        a=nod.a;
-        b=nod.b;
-        c=nod.c;
-        if(c=='?')
+            vals.pb(b);
+        else
         {
-            auto it=s.lower_bound(a);
-            if(it==s.end())
-            {
-                m2[a]=-1;
-                continue;
-            }
-            else
-            {
-                m2[a]=m[*it];
-            }
-            it=s.upper_bound(b);
-            if(it==s.begin())
-            {
-                m3[b]=-1;
-            }
-            else
-            {
-                it=prev(it);
-                m3[b]=m[*it];
-            }
+            vals.pb(a);
+            vals.pb(b);
         }
     }
-    while(pot<pos)
+    sort(all(vals));
+    unique(all(vals));
+    while(sz(vals)>1&&vals.back()<=vals[sz(vals)-2])
+        vals.pop_back();
+    while(pot<sz(vals))
         pot*=2;
     seg.resize(pot*2,0);
     I.resize(pot*2);
     D.resize(pot*2);
     for(i=0; i<n; i++)
-        seg[m[v[i]]+pot]++;
- 
+    {
+        v[i]=upper_bound(all(vals),v[i])-vals.begin();
+        seg[v[i]+pot]++;
+    }
+
     for(i=pot; i<sz(I); i++)
         D[i]=I[i]=i;
- 
+
     for(i=pot-1; i>0; i--)
     {
         I[i]=I[i*2];
@@ -119,14 +92,15 @@ int main()
         if(c=='!')
         {
             a--;
-            update(m[v[a]]+pot,-1);
+            b=upper_bound(all(vals),b)-vals.begin();
+            update(v[a]+pot,-1);
             v[a]=b;
-            update(m[v[a]]+pot,1);
+            update(v[a]+pot,1);
         }
         else
         {
-            a=m2[a];
-            b=m3[b];
+            a=upper_bound(all(vals),a)-vals.begin();
+            b=upper_bound(all(vals),b)-vals.begin();
             if(a==-1||b==-1)
             {
                 cout << 0 <<'\n';

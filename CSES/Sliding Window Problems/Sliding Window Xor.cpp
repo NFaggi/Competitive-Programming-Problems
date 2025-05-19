@@ -1,0 +1,34 @@
+#include <bits/stdc++.h>
+#define ll long long
+#define sz(x) int(x.size())
+#define forn(i,n) for(i=0; i<n; i++)
+#define all(x) x.begin(),x.end()
+#define pb push_back
+#define mp make_pair
+#define fr first
+#define se second
+using namespace std;
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    ll n, k, x, a, b, c, sum=0, xr=0, i;
+    cin >> n >> k;
+    vector<ll>v(n);
+    cin >> x >> a >> b >> c;
+    v[0]=x;
+    for(i=1; i<n; i++)
+        v[i]=(a*v[i-1]+b)%c;
+    for(i=0; i<k; i++)
+        sum=sum^v[i];
+    xr=xr^sum;
+    for(i=k; i<n; i++)
+    {
+        sum=sum^v[i-k];
+        sum=sum^v[i];
+        xr=xr^sum;
+    }
+    cout << xr;
+    return 0;
+}

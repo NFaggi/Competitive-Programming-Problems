@@ -1,3 +1,4 @@
+//Link: https://oj.uz/problem/view/IOI17_prize
 //Score: 100/100
 #include <bits/stdc++.h>
 #define ll long long

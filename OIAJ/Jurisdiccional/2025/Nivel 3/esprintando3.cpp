@@ -1,64 +1,59 @@
 //Link: https://juez.oia.unsam.edu.ar/task/180
-//Score: 90/100
+//Score: 100/100
 #include <bits/stdc++.h>
-#define ll long long
 #define sz(x) int(x.size())
-#define forn(i, n) for (i = 0; i < n; i++)
-#define all(x) x.begin(), x.end()
-#define pb push_back
-#define mp make_pair
-#define fr first
-#define se second
+#define ll long long
 using namespace std;
 
-double dist(double x, double y, double x2, double y2)
-{
-    double xd = (x - x2), yd = (y - y2);
-    double dis = (xd * xd) + (yd * yd);
-    dis = sqrt(dis);
-    return dis;
+double EPS = 1e-12;
+
+double sq(double a) 
+{ 
+    return a * a; 
 }
+double ham(double x, double y, double x2, double y2)
+{
+    return sq(x - x2) + sq(y - y2);
+}
+
 vector<int> x, y;
-vector<ll>dis,pref;
-int k;
+vector<ll> dis, pref;
+vector<double> pref2, pref2Ext, dis2;
+int k, N;
+double k2;
+
 pair<int, int> fin(ll pos)
 {
-    ll K = k;
-    ll xf = x[pos], yf = y[pos], ant = pos, sig, aK = K;
-    K=K%pref.back();
-    ll dis0=pref.back(), l=pos, r=sz(x)-1, piv, di, res=0;
-    if(pos>0)
-        dis0=dis0-pref[pos-1];
-    if(K>dis0)
+    ll K = k, aK = k, dis1 = pref.back(), l = pos, r = sz(x) - 1, piv, di, res = 0;
+    if (pos > 0)
+        dis1 -= pref[pos - 1];
+    if (K > dis1)
     {
-        K=K-dis0;
-        pos=0;
-        xf=x[0];
-        yf=y[0];
-        r=l-1;
-        l=0;
+        K -= dis1;
+        pos = 0;
+        l = 0;
+        r = sz(x) - 1;
     }
-    if(l>0)
-        res=pref[l-1];
-    while(l<=r)
+    if (l > 0)
+        res = pref[l - 1];
+    while (l <= r)
     {
-        piv=(l+r)/2;
-        di=0;
-        if(piv>0)
-            di=pref[piv-1]-res;
-        if(di<=K)
+        piv = (l + r) / 2;
+        di = 0;
+        if (piv > 0)
+            di = pref[piv - 1] - res;
+        if (di <= K)
         {
-            pos=piv;
-            aK=K-di;
-            l=piv+1;
+            pos = piv;
+            aK = K - di;
+            l = piv + 1;
         }
         else
-            r=piv-1;
+            r = piv - 1;
     }
-    ant=pos;
-    sig = (ant + 1) % sz(x);
-    xf = x[ant];
-    yf = y[ant];
+    int ant = pos;
+    int sig = (ant + 1) % sz(x);
+    ll xf = x[ant], yf = y[ant];
     if (xf == x[sig])
     {
         if (y[sig] < yf)
@@ -76,142 +71,160 @@ pair<int, int> fin(ll pos)
     return {xf, yf};
 }
 
-int N;
-double k2;
-double EPS=1e-12;
-double ham(double x, double y, double x2, double y2)
+void cal(int ind, int sig, double piv, double &gx, double &gy)
 {
-    double dis=(x-x2)*(x-x2)+(y-y2)*(y-y2);
-    dis=sqrt(dis);
-    return dis;
-}
-
-void cal(int ind, int sig, double piv, double & gx, double & gy)
-{
-    if(x[ind]==x[sig])
+    if (x[ind] == x[sig])
     {
-        if(y[ind]>y[sig])
-            gy=gy-piv;
+        if (y[ind] > y[sig])
+            gy = gy - piv;
         else
-            gy=gy+piv;
+            gy = gy + piv;
     }
     else
     {
-        if(x[ind]>x[sig])
-            gx=gx-piv;
+        if (x[ind] > x[sig])
+            gx = gx - piv;
         else
-            gx=gx+piv;
+            gx = gx + piv;
     }
 }
 
 double calcDisGC(double piv, int ind)
 {
-    int sig=(ind+1)%sz(x);
-    double falt=k2, sD, cx, cy, gx=x[ind], gy=y[ind];
+    int sig = (ind + 1) % N;
+    double falt = k2, gx = x[ind], gy = y[ind];
 
-    if(x[ind]==x[sig])
-    {
-        gy=piv;
-        sD=abs(gy-y[sig]);
-    }    
+    if (x[ind] == x[sig])
+        gy = piv;
     else
+        gx = piv;
+
+    double sD;
+
+    if (x[ind] == x[sig])
+        sD = fabs(gy - y[sig]);
+    else
+        sD = fabs(gx - x[sig]);
+
+    if (sD >= falt - EPS)
     {
-        gx=piv;
-        sD=abs(gx-x[sig]);
-    }    
-    cx=gx;
-    cy=gy;
-    if(sD>=falt-EPS)
-    {
-        cal(ind,sig,falt,cx,cy);
-        return ham(gx,gy,cx,cy);
+        double cx = gx, cy = gy;
+        cal(ind, sig, falt, cx, cy);
+        return ham(gx, gy, cx, cy);
     }
-    falt=falt-sD;
-    cx=x[sig];
-    cy=y[sig];
-    ind=sig;
-    while(falt>EPS)
+
+    falt -= sD;
+
+    int act = sig;
+
+    double in = 0;
+    if(act>0)
+        in=pref2Ext[act-1];
+    double val = in + falt;
+    auto it1 = pref2Ext.begin() + act;
+    auto it2 = pref2Ext.begin() + act + N;
+    auto it = upper_bound(it1, it2, val);
+    int j = (it - pref2Ext.begin()) - 1;
+    if (j >= act)
     {
-        sig=(ind+1)%sz(x);
-        sD=ham(x[ind],y[ind],x[sig],y[sig]);
-        if(sD>=falt-EPS)
-        {
-            cx=x[ind];
-            cy=y[ind];
-            cal(ind,sig,falt,cx,cy);
-            return ham(gx,gy,cx,cy);
-        }
-        falt=falt-sD;
-        cx=x[sig];
-        cy=y[sig];
-        ind=sig;
+        double res = pref2Ext[j];
+        if(act>0)
+            res-=pref2Ext[act - 1];
+        falt -= res;
+        act = (j+1) % N;
     }
-    return ham(gx,gy,cx,cy);
+
+    int sig2 = (act + 1) % N;
+    double cx = x[act], cy = y[act];
+    cal(act, sig2, falt, cx, cy);
+    return ham(gx, gy, cx, cy);
 }
 
 double distGC(int ind)
 {
-    int sig=(ind+1)%sz(x);
-    double l, r, m1,m2, piv, d1, d2;
-    if(x[ind]==x[sig])
+    int sig = (ind + 1) % N;
+    double l, r;
+    if (x[ind] == x[sig])
     {
-        l=min(y[ind],y[sig]);
-        r=max(y[ind],y[sig]);
+        l = min(y[ind], y[sig]);
+        r = max(y[ind], y[sig]);
     }
     else
     {
-        l=min(x[ind],x[sig]);
-        r=max(x[ind],x[sig]);
+        l = min(x[ind], x[sig]);
+        r = max(x[ind], x[sig]);
     }
-    for(int i=0; i<100; i++)
+
+    int cant = 0;
+    double d1, d2, m1, m2;
+    while (r - l > 1e-10 && cant < 90)
     {
-        piv=(r-l)/3;
-        m1=l+piv;
-        m2=r-piv;
-        d1=calcDisGC(m1,ind);
-        d2=calcDisGC(m2,ind);
-        if(d1<d2)
-            r=m2;
+        m1 = l + (r - l) / 3.0;
+        m2 = r - (r - l) / 3.0;
+        d1 = calcDisGC(m1, ind);
+        d2 = calcDisGC(m2, ind);
+        if (d1 < d2)
+            r = m2;
         else
-            l=m1;
+            l = m1;
+        cant++;
     }
-    return calcDisGC((l+r)/2,ind);
+    return calcDisGC((l + r) / 2.0, ind);
 }
 
-vector<double> esprintando(int K, vector<int> &X, vector<int> &Y) {
-
-    k2=K;
-    N=sz(X);
-    x=X;
-    y=Y;
-    vector<double> ans(2);
+vector<double> esprintando(int K, vector<int> &X, vector<int> &Y)
+{
     k = K;
-    ll i, sig;
-    dis.resize(sz(X));
-    pref.resize(sz(X),0);
-    for(i=0; i<sz(X); i++)
+    k2 = K;
+    N = sz(X);
+    x = X;
+    y = Y;
+    int i;
+    dis.resize(N, 0);
+    dis2.resize(N, 0.0);
+    pref.resize(N, 0);
+    pref2.resize(N, 0.0);
+
+    for (i = 0; i < N; ++i)
     {
-        sig=(i+1)%sz(X);
-        dis[i]=dist(X[i],Y[i],X[sig],Y[sig]);
-        if(i>0)
-            pref[i]=pref[i-1];
-        pref[i]=pref[i]+dis[i];
+        int sig = (i + 1) % N;
+        dis2[i] = sqrt(ham(X[i], Y[i], X[sig], Y[sig]));
+        dis[i] = dis2[i];
+        if (i > 0)
+        {
+            pref[i] = pref[i - 1];
+            pref2[i] = pref2[i - 1];
+        }
+        pref2[i] += dis2[i];
+        pref[i] += dis[i];
     }
+
+    pref2Ext.resize(2 * N);
+    for (i = 0; i < 2 * N; ++i)
+    {
+        pref2Ext[i] = dis2[i % N];
+        if (i > 0)
+            pref2Ext[i] += pref2Ext[i - 1];
+    }
+
+    vector<double> ans(2);
     pair<int, int> p2 = fin(0);
-    ans[0] = ans[1] = dist(x[0], y[0], p2.fr, p2.se);
-    for (i = 0; i < sz(X); i++)
+    double ma = ham(x[0], y[0], p2.first, p2.second);
+    for (i = 0; i < N; ++i)
     {
         p2 = fin(i);
-        ans[0] = min(dist(x[i], y[i], p2.fr, p2.se), ans[0]);
-        ans[1] = max(dist(x[i], y[i], p2.fr, p2.se), ans[1]);
+        ma = max(ma, ham(x[i], y[i], p2.first, p2.second));
     }
-    if(N<=500||K<=2)
+
+    double mi = DBL_MAX;
+    for (i = 0; i < N; ++i)
     {
-    ans[0]=DBL_MAX;
-    for(int i=0; i<N; i++)
-        ans[0]=min(ans[0],distGC(i));
-        }
+        double val = distGC(i);
+        mi = min(mi, val);
+    }
+
+    ans[0] = sqrt(mi);
+    ans[1] = sqrt(ma);
     return ans;
 }
-
 

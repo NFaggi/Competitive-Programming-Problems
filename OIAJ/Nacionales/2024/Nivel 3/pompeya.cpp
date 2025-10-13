@@ -9,97 +9,87 @@
 #define fr first
 #define se second
 using namespace std;
-
 struct Point
 {
-    ll x, y;
-
-    Point(ll x_ = 0, ll y_ = 0) : x(x_), y(y_) {}
-
-    Point operator-(const Point &p) const
-    {
-        return Point(x - p.x, y - p.y);
-    }
-
-    ll cross(const Point &p) const
-    {
-        return x * p.y - y * p.x;
-    }
-
-    ll cross(const Point &p, const Point &q) const
-    {
-        return (p - *this).cross(q - *this);
-    }
-
+    ll x=0, y=0;
     int half() const
     {
-        return int(y < 0 || (y == 0 && x < 0));
+        return int(y<0||(x<0&&y==0));
     }
 };
 
-vector<vector<int>> find_faces(vector<Point> vertices, vector<vector<int>> adj)
+ll cruz(Point a, Point b)
 {
-    int n = vertices.size();
-    vector<vector<char>> used(n);
-    for (int i = 0; i < n; i++)
+    return a.x*b.y-a.y*b.x;
+}
+
+Point c;
+vector<Point> ver;
+bool comp(const int A, const int B)
+{
+    Point a=ver[A], b=ver[B];
+    a.x-=c.x;
+    b.x-=c.x;
+    a.y-=c.y;
+    b.y-=c.y;
+    if(a.half()!=b.half())
+        return a.half()<b.half();
+    return cruz(a,b)>0;
+}
+
+vector<vector<int>>find_faces(vector<Point>vert, vector<vector<int>>grafo)
+{
+    ver=vert;
+    ll i, n=sz(vert), j;
+    vector<vector<bool>>vis(n);
+    for(i=0; i<n; i++)
     {
-        used[i].resize(adj[i].size());
-        used[i].assign(adj[i].size(), 0);
-        auto compare = [&](int l, int r)
-        {
-            Point pl = vertices[l] - vertices[i];
-            Point pr = vertices[r] - vertices[i];
-            if (pl.half() != pr.half())
-                return pl.half() < pr.half();
-            return pl.cross(pr) > 0;
-        };
-        sort(adj[i].begin(), adj[i].end(), compare);
+        vis[i].resize(sz(grafo[i]),0);
+        c=vert[i];
+        sort(all(grafo[i]),comp);
     }
-
-    vector<vector<int>> faces;
-    for (int i = 0; i < n; i++)
+    vector<vector<int>>faces;
+    for(i=0; i<n; i++)
     {
-        for (int edge_id = 0; edge_id < adj[i].size(); edge_id++)
+        for(j=0; j<sz(grafo[i]); j++)
         {
-            if (used[i][edge_id])
+            if(vis[i][j])
                 continue;
-
-            vector<int> face;
-            int v = i;
-            int e = edge_id;
-
-            while (!used[v][e])
+            vector<int>face;
+            ll v=i, e=grafo[i][j], e1=j;
+            while(!vis[v][e1])
             {
-                used[v][e] = true;
-                face.push_back(v);
-                int u = adj[v][e];
-                int e1 = lower_bound(adj[u].begin(), adj[u].end(), v, [&](int l, int r)
-                                     {
-                    Point pl = vertices[l] - vertices[u];
-                    Point pr = vertices[r] - vertices[u];
-                    if (pl.half() != pr.half())
-                        return pl.half() < pr.half();
-                    return pl.cross(pr) > 0; }) -
-                         adj[u].begin();
-                e1 = (e1 + 1) % adj[u].size();
-                v = u;
-                e = e1;
+                e=grafo[v][e1];
+                vis[v][e1]=1;
+                face.pb(v);
+                c=vert[e];
+                e1=lower_bound(all(grafo[e]),v,comp)-grafo[e].begin();
+                v=e;
+                e1=(e1+1)%sz(grafo[e]);
+                e=grafo[v][e1];
             }
-
-            reverse(face.begin(), face.end());
-            Point p1 = vertices[face[0]];
-            ll sum = 0;
-            for (int j = 0; j < (int)face.size(); ++j)
+            reverse(all(face));
+            ll sum=0;
+            Point in=vert[face[0]];
+            for(ll k=0; k<sz(face); k++)
             {
-                Point p2 = vertices[face[j]];
-                Point p3 = vertices[face[(j + 1) % face.size()]];
-                sum += (p2 - p1).cross(p3 - p2);
+                ll sig=(k+1)%sz(face);
+                Point a=vert[face[k]], b=vert[face[sig]];
+                b.x-=a.x;
+                b.y-=a.y;
+                a.x-=in.x;
+                a.y-=in.y;
+                sum+=cruz(a,b);
             }
-
-            if (sum <= 0)
-                faces.insert(faces.begin(), face);
+            if(sum<=0)
+            {
+                reverse(all(faces));
+                faces.pb(face);
+                reverse(all(faces));
+            }
             else
-                faces.emplace_back(face);
+                faces.pb(face);
+            
         }
     }
     return faces;

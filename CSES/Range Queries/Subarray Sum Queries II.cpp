@@ -44,8 +44,6 @@ int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    //freopen("in.txt","r",stdin);
-    //freopen("out.txt","w",stdout);
     ll n, q, i, pot = 1, x, a, b;
     cin >> n >> q;
     while (pot < n)

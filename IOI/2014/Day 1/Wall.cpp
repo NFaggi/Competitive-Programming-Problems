@@ -1,3 +1,4 @@
+//Link: https://oj.uz/problem/view/IOI14_wall
 //Score: 100/100
 #include <bits/stdc++.h>
 #define ll int

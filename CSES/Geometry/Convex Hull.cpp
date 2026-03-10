@@ -1,67 +1,104 @@
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) int(x.size())
+#define forn(i,n) for(i=0; i<n; i++)
 #define all(x) x.begin(),x.end()
+#define pb push_back
+#define mp make_pair
+#define fr first
+#define se second
 using namespace std;
-struct Punto
+
+struct cord
 {
     ll x, y;
 };
-bool comp(const Punto &a, const Punto &b)
+
+ll cruz(cord &A, cord &B)
 {
-    if(a.y!=b.y)
-        return a.y<b.y;
-    return a.x<b.x;
+    return A.x*B.y-A.y*B.x;
 }
-ll valid(const Punto &a, const Punto &b, const Punto &c)
+
+void unir(cord &A, cord &B, cord &X)
 {
-    return (a.x - b.x) * (c.y - b.y) - (a.y - b.y) * (c.x - b.x);
+    X.x=B.x-A.x;
+    X.y=B.y-A.y;
+}
+
+ll ori(cord A, cord B, cord C)
+{
+    cord X, Y;
+    unir(A,B,X);
+    unir(A,C,Y);
+    return cruz(X,Y);
+}
+
+bool ord(cord &A, cord &B)
+{
+    if(A.x!=B.x)
+        return A.x<B.x;
+    return A.y<B.y;
 }
 
 int main()
 {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
     ll n, i;
     cin >> n;
-    vector<Punto>v(n);
+
+    vector<cord>v(n);
+
     for(i=0; i<n; i++)
         cin >> v[i].x >> v[i].y;
-    sort(all(v),comp);
-    vector<Punto>s,s2;
-    set<pair<ll,ll>> se;
-    vector<Punto> ans;
-    for(i=0; i<n; i++)
-    {
-        while(sz(s)>1&&valid(s[sz(s)-2],s[sz(s)-1],v[i])>0ll)s.pop_back();
-        s.push_back(v[i]);
-    }
-    for(i=n-1; i>=0; i--)
-    {
-        while(sz(s2)>1&&valid(s2[sz(s2)-2],s2[sz(s2)-1],v[i])>0ll)s2.pop_back();
-        s2.push_back(v[i]);
-    }
+    
+    sort(all(v),ord);
 
-    pair<ll,ll>p;
-    for (auto j : s)
-    {
-        p={j.x,j.y};
-        if (!se.count(p))
-        {
-            ans.push_back(j);
-            se.insert(p);
-        }
-    }
-    for (auto j : s2)
-    {
-        p={j.x,j.y};
-        if (!se.count(p))
-        {
-            ans.push_back(j);
-            se.insert(p);
-        }
-    }
 
-    cout << sz(ans) << '\n';
-    for (auto j : ans)
-        cout << j.x << ' ' << j.y << '\n';
+    vector<cord>topH, botH, q;
+
+    auto del=[&](ll x)-> bool
+    {
+        if(x==0)
+            return ori(q[sz(q)-2],q[sz(q)-1],v[i])<0;
+        return ori(q[sz(q)-2],q[sz(q)-1],v[i])>0;
+    };
+
+    auto calc=[&](ll x)
+    {
+        q.pb(v[0]);
+        for(i=1; i<sz(v); i++)
+        {
+            while(sz(q)>1&&del(x))
+                q.pop_back();
+            q.pb(v[i]);
+        }
+    };
+    
+    // top hull
+    calc(0);
+    swap(q,topH);
+
+    // bottom hull
+    calc(1);
+    swap(q,botH);
+
+    botH.pop_back();
+    reverse(all(botH));
+    botH.pop_back();
+
+    // unir
+    vector<cord>pts;
+    for(auto &k: topH)
+        pts.pb(k);
+    for(auto &k: botH)
+        pts.pb(k);
+    
+    // respuesta
+    cout << sz(pts) << '\n';
+    for(auto &k:pts)
+        cout << k.x << ' ' << k.y << '\n';
     return 0;
 }
+

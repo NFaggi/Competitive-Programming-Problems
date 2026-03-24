@@ -1,3 +1,5 @@
+//Link: https://codeforces.com/gym/105783/problem/A
+//Score: 100/100
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) int(x.size())

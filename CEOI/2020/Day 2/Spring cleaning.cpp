@@ -1,4 +1,3 @@
-//Link: https://qoj.ac/contest/216/problem/952
 //Score: 100/100
 #include <bits/stdc++.h>
 #define ll long long

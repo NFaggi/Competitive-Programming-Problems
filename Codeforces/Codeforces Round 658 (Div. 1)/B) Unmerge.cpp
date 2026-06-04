@@ -16,7 +16,10 @@ void solve()
     vector<ll>v(n*2+1);
     for(i=n*2; i>=1; i--)
         cin >> v[i];
-    vector<vector<vector<ll>>>dp(2,vector<vector<ll>>(n+1,vector<ll>(n+1,0)));
+    vector<vector<vector<ll>>>dp(2,vector<vector<ll>>(n+1,vector<ll>(n+1,0))); 
+    // dp[i][j][k]: i ultimo vector al que le agregue un numero (0: A, 1: B), 
+    // j: Tamano de A, k: Tamano de B 
+    // y en dp[i][j][k] se guarda cual es el ultimo nodo en el vector que no es i
     dp[0][0][0]=dp[1][0][0]=n*2+1;
     v[0]=n*2+1;
     for(i=0; i<=n; i++)

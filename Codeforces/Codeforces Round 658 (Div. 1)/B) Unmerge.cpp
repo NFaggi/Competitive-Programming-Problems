@@ -1,3 +1,4 @@
+//Link: https://codeforces.com/problemset/problem/1381/B
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) int(x.size())
